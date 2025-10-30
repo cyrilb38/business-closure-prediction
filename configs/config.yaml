@@ -1,0 +1,19 @@
+# INSEE data sources
+insee:
+  base_url: "https://www.data.gouv.fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/"
+  
+  # Monthly stock files
+  stock_etablissement_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissement_utf8.parquet"
+  stock_unitelegale_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegale_utf8.parquet"
+  
+  # Historical files (events)
+  historique_etablissement_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissementHistorique_utf8.parquet"
+  historique_unitelegale_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegaleHistorique_utf8.parquet"
+
+# Data paths
+paths:
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  models: "models"
+  
