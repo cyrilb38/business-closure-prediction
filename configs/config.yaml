@@ -1,14 +1,17 @@
 # INSEE data sources
 insee:
-  base_url: "https://www.data.gouv.fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/"
+  # Metadata (not downloaded)
+  metadata:
+    portal: "https://www.insee.fr/fr/information/3591226"
+    documentation: "https://www.insee.fr/fr/statistiques/fichier/3591226/Documentation.pdf"
+    base_url: "https://files.insee.fr/insee-sirene"
   
-  # Monthly stock files
-  stock_etablissement_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissement_utf8.parquet"
-  stock_unitelegale_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegale_utf8.parquet"
-  
-  # Historical files (events)
-  historique_etablissement_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockEtablissementHistorique_utf8.parquet"
-  historique_unitelegale_url: "https://object.files.data.gouv.fr/data-pipeline-open/siren/stock/StockUniteLegaleHistorique_utf8.parquet"
+  # Downloadable files
+  download_urls:
+    stock_etablissement: "https://files.insee.fr/insee-sirene/StockEtablissement_utf8.zip"
+    stock_unitelegale: "https://files.insee.fr/insee-sirene/StockUniteLegale_utf8.zip"
+    historique_etablissement: "https://files.insee.fr/insee-sirene/StockEtablissementHistorique_utf8.zip"
+    historique_unitelegale: "https://files.insee.fr/insee-sirene/StockUniteLegaleHistorique_utf8.zip"
 
 # Data paths
 paths:

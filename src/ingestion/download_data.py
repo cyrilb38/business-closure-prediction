@@ -92,6 +92,7 @@ def download_insee_files(
 
     from utils.config import get_data_paths, get_insee_urls
 
+    # Get download URLs (not metadata)
     insee_urls = get_insee_urls(config)
     data_paths = get_data_paths(config)
 
@@ -108,11 +109,9 @@ def download_insee_files(
 
     # Filter URLs if specific files requested
     urls_to_download = {}
-    for key, url in insee_urls.items():
-        if key.endswith("_url"):
-            file_type = key.replace("_url", "")
-            if files_to_download is None or file_type in files_to_download:
-                urls_to_download[file_type] = url
+    for file_type, url in insee_urls.items():
+        if files_to_download is None or file_type in files_to_download:
+            urls_to_download[file_type] = url
 
     logger.info(f"Files to download: {list(urls_to_download.keys())}")
 

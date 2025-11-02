@@ -29,18 +29,39 @@ def load_config(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
 
 def get_insee_urls(config: Dict[str, Any] = None) -> Dict[str, str]:
     """
-    Extract INSEE URLs from configuration.
+    Extract INSEE download URLs from configuration.
 
     Args:
         config: Configuration dictionary (if None, will load from default path)
 
     Returns:
-        Dictionary with INSEE file URLs
+        Dictionary with INSEE file download URLs
     """
     if config is None:
         config = load_config()
 
-    return config.get("insee", {})
+    insee_config = config.get("insee", {})
+
+    # Return only downloadable URLs
+    return insee_config.get("download_urls", {})
+
+
+def get_insee_metadata(config: Dict[str, Any] = None) -> Dict[str, str]:
+    """
+    Extract INSEE metadata from configuration.
+
+    Args:
+        config: Configuration dictionary (if None, will load from default path)
+
+    Returns:
+        Dictionary with INSEE metadata (portal, documentation, etc.)
+    """
+    if config is None:
+        config = load_config()
+
+    insee_config = config.get("insee", {})
+
+    return insee_config.get("metadata", {})
 
 
 def get_data_paths(config: Dict[str, Any] = None) -> Dict[str, str]:
