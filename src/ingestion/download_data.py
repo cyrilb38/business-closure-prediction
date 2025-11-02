@@ -74,6 +74,7 @@ def download_insee_files(
     config: dict,
     output_dir: Optional[str] = None,
     files_to_download: Optional[list] = None,
+    force: bool = False,
 ) -> dict:
     """
     Download INSEE SIRENE files based on configuration.
@@ -84,9 +85,13 @@ def download_insee_files(
         files_to_download: Optional list of specific files to download
                           (e.g., ['stock_etablissement', 'stock_unitelegale'])
                           If None, downloads all available files
+        force: If True, re-download files even if they already exist locally
 
     Returns:
-        Dictionary with download results {filename: success_bool}
+        Dictionary with download results. Values can be:
+            - True: Successfully downloaded
+            - False: Download failed
+            - 'skipped': File already exists and force=False
     """
     from datetime import datetime
 
@@ -106,6 +111,7 @@ def download_insee_files(
 
     logger.info(f"Starting INSEE data download to: {output_dir}")
     logger.info(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"Force re-download: {force}")
 
     # Filter URLs if specific files requested
     urls_to_download = {}
@@ -121,23 +127,47 @@ def download_insee_files(
         filename = url.split("/")[-1]
         local_path = output_dir / filename
 
-        logger.info(f"Downloading {file_type}: {filename}")
+        # Check if file already exists
+        if local_path.exists() and not force:
+            file_size = local_path.stat().st_size / (1024 * 1024)  # Size in MB
+            logger.info(
+                f"Skipping {file_type}: {filename} (already exists, {file_size:.2f} MB)"
+            )
+            results[file_type] = "skipped"
+            continue
+
+        # Download file
+        if local_path.exists() and force:
+            logger.info(f"Force re-downloading {file_type}: {filename}")
+        else:
+            logger.info(f"Downloading {file_type}: {filename}")
+
         logger.debug(f"URL: {url}")
         logger.debug(f"Destination: {local_path}")
 
         success = download_file(url, str(local_path))
         results[file_type] = success
 
-    # Summary
-    successful = sum(1 for v in results.values() if v)
-    failed = len(results) - successful
+    # Summary with detailed statistics
+    successful = sum(1 for v in results.values() if v is True)
+    failed = sum(1 for v in results.values() if v is False)
+    skipped = sum(1 for v in results.values() if v == "skipped")
+    total = len(results)
 
     logger.info("=" * 60)
-    logger.info(f"Download Summary: {successful}/{len(results)} successful")
+    logger.info("Download Summary:")
+    logger.info(f"  Total files:        {total}")
+    logger.info(f"  Successfully downloaded: {successful}")
+    logger.info(f"  Skipped (already exist): {skipped}")
+    logger.info(f"  Failed:             {failed}")
+
     if failed > 0:
-        logger.warning(f"Failed downloads: {failed}")
-        failed_files = [k for k, v in results.items() if not v]
-        logger.warning(f"Failed files: {failed_files}")
+        failed_files = [k for k, v in results.items() if v is False]
+        logger.warning(f"  Failed files: {', '.join(failed_files)}")
+
+    if skipped > 0 and not force:
+        logger.info("  Tip: Use force=True to re-download existing files")
+
     logger.info("=" * 60)
 
     return results
