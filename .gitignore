@@ -21,6 +21,7 @@ models/*.pkl
 # Notebooks
 .ipynb_checkpoints/
 *.marimo.cache/
+**/__marimo__/
 
 # IDE
 .vscode/
